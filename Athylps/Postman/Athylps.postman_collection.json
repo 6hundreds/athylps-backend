@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "f34a9719-361e-488a-aa2e-e829d469f3e5",
+		"name": "Athylps",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Api",
+			"item": []
+		},
+		{
+			"name": "IdentityServer",
+			"item": [
+				{
+					"name": "Endpoints",
+					"item": [
+						{
+							"name": "Discovery",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}/.well-known/openid-configuration",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										".well-known",
+										"openid-configuration"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}

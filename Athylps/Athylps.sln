@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athylps", "Athylps\Athylps.csproj", "{E1D1C7C6-5C56-4051-99AD-E1131845474A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.Core", "Athylps.Core\Athylps.Core.csproj", "{5D9B3883-3690-4DD4-9187-545F9BCC7A42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.Infrastructure", "Athylps.Infrastructure\Athylps.Infrastructure.csproj", "{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.IdentityServer", "Athylps.IdentityServer\Athylps.IdentityServer.csproj", "{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postman", "Postman", "{F84DB4BE-4658-4338-83D3-9C1517E2DF6D}"
+	ProjectSection(SolutionItems) = preProject
+		Postman\Athylps.postman_collection.json = Postman\Athylps.postman_collection.json
+		Postman\Athylps_development.postman_environment.json = Postman\Athylps_development.postman_environment.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +21,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E1D1C7C6-5C56-4051-99AD-E1131845474A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1D1C7C6-5C56-4051-99AD-E1131845474A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1D1C7C6-5C56-4051-99AD-E1131845474A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1D1C7C6-5C56-4051-99AD-E1131845474A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
