@@ -88,7 +88,6 @@ namespace Athylps.IdentityServer
 
 			app.UseStaticFiles();
 			app.UseIdentityServer();
-			app.UseMvc();
 		}
 	}
 }

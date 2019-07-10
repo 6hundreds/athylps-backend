@@ -78,13 +78,13 @@ namespace Athylps.IdentityServer.Extensions
 				var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
 				var email = adminSettings["Email"];
 
-				var admin = await userManager.FindByNameAsync(email);
+				var admin = await userManager.FindByEmailAsync(email);
 				if (admin == null)
 				{
 					admin = new User
 					{
 						Email = email, 
-						UserName = email
+						UserName = adminSettings["Name"]
 					};
 
 					var password = adminSettings["Password"];
