@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Athylps.IdentityServer.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -24,14 +25,17 @@ namespace Athylps.IdentityServer
 				.Enrich.WithProperty("Environment", env)
 				.CreateLogger();
 
-			await host.UseKestrel()
+			var builder = host.UseKestrel()
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.UseConfiguration(configuration)
 				.UseSerilog()
 				.UseUrls(configuration["Url"])
 				.UseStartup<Startup>()
-				.Build()
-				.RunAsync();
+				.Build();
+
+			await builder.InitializeIdentityServerDbAsync();
+			await builder.InitializeAthylpsDbAsync();
+			await builder.RunAsync();
 		}
 	}
 }

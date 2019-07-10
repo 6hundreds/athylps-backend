@@ -2,13 +2,10 @@
 using System.Reflection;
 using Athylps.Core.Entities;
 using Athylps.Infrastructure.Data.Context;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +27,13 @@ namespace Athylps.IdentityServer
 			services.AddDbContext<AthylpsDbContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("AthylpsDb")));
 
-			services.AddIdentity<User, Role>()
+			services.AddIdentity<User, Role>(options =>
+				{
+					options.User.RequireUniqueEmail = true;
+
+					options.Password.RequireNonAlphanumeric = false;
+					options.Password.RequiredLength = 8;
+				})
 				.AddEntityFrameworkStores<AthylpsDbContext>()
 				.AddDefaultTokenProviders();
 
@@ -67,8 +70,7 @@ namespace Athylps.IdentityServer
 
 			if (Environment.IsDevelopment())
 			{
-				builder.AddDeveloperSigningCredential()
-					.AddTestUsers(Config.GetTestUsers());
+				builder.AddDeveloperSigningCredential();
 			}
 			else
 			{
@@ -78,8 +80,6 @@ namespace Athylps.IdentityServer
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			InitializeDatabase(app);
-
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -88,44 +88,6 @@ namespace Athylps.IdentityServer
 
 			app.UseStaticFiles();
 			app.UseIdentityServer();
-			app.UseMvc();
-		}
-
-		private void InitializeDatabase(IApplicationBuilder app)
-		{
-			using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-			{
-				serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-				var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-				context.Database.Migrate();
-
-				if (!context.Clients.Any())
-				{
-					foreach (var client in Config.GetClients(Configuration))
-					{
-						context.Clients.Add(client.ToEntity());
-					}
-				}
-
-				if (!context.IdentityResources.Any())
-				{
-					foreach (var resource in Config.GetIdentityResources())
-					{
-						context.IdentityResources.Add(resource.ToEntity());
-					}
-				}
-
-				if (!context.ApiResources.Any())
-				{
-					foreach (var resource in Config.GetApis())
-					{
-						context.ApiResources.Add(resource.ToEntity());
-					}
-				}
-
-				context.SaveChanges();
-			}
 		}
 	}
 }

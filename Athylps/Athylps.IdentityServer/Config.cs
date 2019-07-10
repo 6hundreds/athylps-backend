@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 using Microsoft.Extensions.Configuration;
@@ -34,11 +35,16 @@ namespace Athylps.IdentityServer
 				{
 					ClientId = clientsSettings["Api1:ClientId"],
 					ClientName = clientsSettings["Api1:ClientName"],
-					
-					AllowedGrantTypes = GrantTypes.ClientCredentials,
 					ClientSecrets = { new Secret(clientsSettings["Api1:ClientSecret"].Sha256()) },
-
-					AllowedScopes = { "api1" }
+					
+					AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+					AllowedScopes =
+					{
+						IdentityServerConstants.StandardScopes.OpenId,
+						IdentityServerConstants.StandardScopes.Profile,
+						"api1"
+					},
+					AllowOfflineAccess = true
 				}
 			};
 		}
