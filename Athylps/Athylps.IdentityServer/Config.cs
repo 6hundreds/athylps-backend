@@ -34,11 +34,11 @@ namespace Athylps.IdentityServer
 				{
 					ClientId = clientsSettings["Api1:ClientId"],
 					ClientName = clientsSettings["Api1:ClientName"],
-					
-					AllowedGrantTypes = GrantTypes.ClientCredentials,
 					ClientSecrets = { new Secret(clientsSettings["Api1:ClientSecret"].Sha256()) },
-
-					AllowedScopes = { "api1" }
+					
+					AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+					AllowedScopes = { "api1" },
+					AllowOfflineAccess = true
 				}
 			};
 		}

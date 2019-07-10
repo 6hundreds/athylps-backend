@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Athylps.Core.Entities;
+using Athylps.IdentityServer.Types;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Hosting;
@@ -60,18 +61,15 @@ namespace Athylps.IdentityServer.Extensions
 			{
 				var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 
-				var admins = await roleManager.FindByNameAsync("Admin");
-				if (admins == null)
+				foreach (string roleName in Roles.ToArray())
 				{
-					admins = new Role("Admin");
-					await roleManager.CreateAsync(admins);
-				}
-
-				var users = await roleManager.FindByNameAsync("User");
-				if (users == null)
-				{
-					users = new Role("User");
-					await roleManager.CreateAsync(users);
+					Role role = await roleManager.FindByNameAsync(roleName);
+					
+					if (role == null)
+					{
+						role = new Role(roleName);
+						await roleManager.CreateAsync(role);
+					}
 				}
 
 				var adminSettings = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>()
@@ -101,7 +99,7 @@ namespace Athylps.IdentityServer.Extensions
 						throw new Exception(message);
 					}
 
-					await userManager.AddToRoleAsync(admin, admins.Name);
+					await userManager.AddToRoleAsync(admin, Roles.Admin);
 				}
 			}
 		}
