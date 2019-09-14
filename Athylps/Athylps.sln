@@ -5,17 +5,17 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.Core", "Athylps.Core\Athylps.Core.csproj", "{5D9B3883-3690-4DD4-9187-545F9BCC7A42}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.Infrastructure", "Athylps.Infrastructure\Athylps.Infrastructure.csproj", "{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athylps.IdentityServer", "Athylps.IdentityServer\Athylps.IdentityServer.csproj", "{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postman", "Postman", "{F84DB4BE-4658-4338-83D3-9C1517E2DF6D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9ED38ACD-3633-4BD4-8077-E3A8ACFB7675}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postman", "Postman", "{BEF388DA-DE55-4410-9F37-A6CC27E88CDB}"
 	ProjectSection(SolutionItems) = preProject
-		Postman\Athylps.postman_collection.json = Postman\Athylps.postman_collection.json
-		Postman\Athylps_development.postman_environment.json = Postman\Athylps_development.postman_environment.json
+		Solution Items\Postman\Athylps.postman_collection.json = Solution Items\Postman\Athylps.postman_collection.json
+		Solution Items\Postman\Athylps_development.postman_environment.json = Solution Items\Postman\Athylps_development.postman_environment.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athylps.Management", "Athylps.Management\Athylps.Management.csproj", "{6A81AA5E-D9D3-44D6-9A50-DFBEFB37CDD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athylps.UserApi", "Athylps.UserApi\Athylps.UserApi.csproj", "{6E745DA2-2452-4C34-9047-C27AFA75E65C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,21 +27,20 @@ Global
 		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D9B3883-3690-4DD4-9187-545F9BCC7A42}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA5E2F10-C20B-4941-A1F2-7027EDEC8836}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9664E40-D01B-4182-B0E3-D7DE8981ECEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A81AA5E-D9D3-44D6-9A50-DFBEFB37CDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A81AA5E-D9D3-44D6-9A50-DFBEFB37CDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A81AA5E-D9D3-44D6-9A50-DFBEFB37CDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A81AA5E-D9D3-44D6-9A50-DFBEFB37CDD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E745DA2-2452-4C34-9047-C27AFA75E65C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E745DA2-2452-4C34-9047-C27AFA75E65C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E745DA2-2452-4C34-9047-C27AFA75E65C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E745DA2-2452-4C34-9047-C27AFA75E65C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BEF388DA-DE55-4410-9F37-A6CC27E88CDB} = {9ED38ACD-3633-4BD4-8077-E3A8ACFB7675}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD674C7F-E398-4BD0-A7C0-867A74BF4804}

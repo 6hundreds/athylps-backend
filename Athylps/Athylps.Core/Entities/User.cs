@@ -2,7 +2,7 @@
 
 namespace Athylps.Core.Entities
 {
-	public class User: IdentityUser<long>
+	public class User : IdentityUser<long>
 	{
 	}
 }

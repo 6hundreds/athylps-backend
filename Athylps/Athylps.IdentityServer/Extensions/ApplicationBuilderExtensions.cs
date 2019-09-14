@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
-using Athylps.IdentityServer.Types;
+using Athylps.Core.Types;
+using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,90 +20,111 @@ namespace Athylps.IdentityServer.Extensions
 {
 	public static class ApplicationBuilderExtensions
 	{
-		public static async Task InitializeIdentityServerDbAsync(this IWebHost webHost)
+		public static async Task InitializeIdentityServerStorages(this IWebHost webHost)
 		{
-			using (var serviceScope = webHost.Services.GetService<IServiceScopeFactory>().CreateScope())
+			using (IServiceScope serviceScope = webHost.Services.CreateScope())
 			{
-				await serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
-
-				var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-				await context.Database.MigrateAsync();
-
-				if (!await context.Clients.AnyAsync())
-				{
-					var configuration = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
-
-					foreach (var client in Config.GetClients(configuration))
-					{
-						context.Clients.Add(client.ToEntity());
-					}
-				}
-
-				if (!await context.IdentityResources.AnyAsync())
-				{
-					foreach (var resource in Config.GetIdentityResources())
-					{
-						context.IdentityResources.Add(resource.ToEntity());
-					}
-				}
-
-				if (!await context.ApiResources.AnyAsync())
-				{
-					foreach (var resource in Config.GetApis())
-					{
-						context.ApiResources.Add(resource.ToEntity());
-					}
-				}
-
-				await context.SaveChangesAsync();
+				await InitializePersistedGrantStorage(serviceScope);
+				await InitializeConfigurationStorage(serviceScope);
+				await InitializeAthylpsStorage(serviceScope);
 			}
 		}
 
-		public static async Task InitializeAthylpsDbAsync(this IWebHost webHost)
+		private static async Task InitializePersistedGrantStorage(IServiceScope serviceScope)
 		{
-			using (var serviceScope = webHost.Services.GetService<IServiceScopeFactory>().CreateScope())
-			{
-				var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+			PersistedGrantDbContext grantDbContext = serviceScope.ServiceProvider.GetService<PersistedGrantDbContext>();
+			await grantDbContext.Database.EnsureCreatedAsync();
+		}
 
-				foreach (string roleName in Roles.ToArray())
-				{
-					Role role = await roleManager.FindByNameAsync(roleName);
+		private static async Task InitializeConfigurationStorage(IServiceScope serviceScope)
+		{
+			ConfigurationDbContext configurationDbContext = serviceScope.ServiceProvider.GetService<ConfigurationDbContext>();
+			await configurationDbContext.Database.EnsureCreatedAsync();
+
+			if (!await configurationDbContext.Clients.AnyAsync())
+			{
+				IConfiguration configuration = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
 					
-					if (role == null)
-					{
-						role = new Role(roleName);
-						await roleManager.CreateAsync(role);
-					}
+				foreach (Client client in Configuration.GetClients(configuration))
+				{
+					await configurationDbContext.Clients.AddAsync(client.ToEntity());
+				}
+			}
+
+			if (!await configurationDbContext.IdentityResources.AnyAsync())
+			{
+				foreach (IdentityResource resource in Configuration.GetIdentityResources())
+				{
+					await configurationDbContext.IdentityResources.AddAsync(resource.ToEntity());
+				}
+			}
+
+			if (!await configurationDbContext.ApiResources.AnyAsync())
+			{
+				foreach (ApiResource resource in Configuration.GetApis())
+				{
+					await configurationDbContext.ApiResources.AddAsync(resource.ToEntity());
+				}
+			}
+
+			await configurationDbContext.SaveChangesAsync();
+		}
+
+		private static async Task InitializeAthylpsStorage(IServiceScope serviceScope)
+		{
+			AthylpsDbContext athylpsDbContext = serviceScope.ServiceProvider.GetService<AthylpsDbContext>();
+			await athylpsDbContext.Database.EnsureCreatedAsync();
+
+			var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>();
+
+			foreach (string roleName in Roles.ToArray())
+			{
+				Role role = await roleManager.FindByNameAsync(roleName);
+				
+				if (role == null)
+				{
+					role = new Role(roleName);
+					await roleManager.CreateAsync(role);
+				}
+			}
+
+			var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
+
+			User admin = await userManager.FindByNameAsync("admin");
+			
+			if (admin == null)
+			{
+				admin = new User
+				{
+					UserName = "admin",
+					EmailConfirmed = true,
+					Email = "a@email.com"
+				};
+
+				IConfiguration configuration = serviceScope.ServiceProvider.GetService<IConfiguration>();
+				IdentityResult result = await userManager.CreateAsync(admin, configuration["Admin:Password"]);
+
+				if (!result.Succeeded)
+				{
+					IdentityError error = result.Errors.FirstOrDefault();
+
+					Log.Error("Ошибка при создании администратора: {error}", error?.Description);
+					throw new Exception(error?.Description);
 				}
 
-				var adminSettings = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>()
-					.GetSection("IdentityServerSettings:Admin");
-
-				var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
-				var email = adminSettings["Email"];
-
-				var admin = await userManager.FindByEmailAsync(email);
-				if (admin == null)
+				admin = await userManager.FindByNameAsync("admin");
+				
+				result = await userManager.AddClaimsAsync(admin, new[]
 				{
-					admin = new User
-					{
-						Email = email, 
-						UserName = adminSettings["Name"]
-					};
+					new Claim(JwtClaimTypes.Name, "Administrator")
+				});
 
-					var password = adminSettings["Password"];
-					IdentityResult result = await userManager.CreateAsync(admin, password);
+				if (!result.Succeeded)
+				{
+					IdentityError error = result.Errors.FirstOrDefault();
 
-					if (!result.Succeeded)
-					{
-						var errors = string.Join("\n", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToList());
-						var message = $"Ошибка при инициализации админа. {errors}";
-						
-						Log.Error(message);
-						throw new Exception(message);
-					}
-
-					await userManager.AddToRoleAsync(admin, Roles.Admin);
+					Log.Error("Ошибка при добавлении claim: {error}", error?.Description);
+					throw new Exception(error?.Description);
 				}
 			}
 		}

@@ -1,36 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Athylps.IdentityServer.Extensions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace Athylps.IdentityServer
+namespace Athylps.UserApi
 {
 	public class Program
 	{
 		public static async Task Main(string[] args)
 		{
-			bool seed = args.Any(x => x == "-seed");
-
-			if (seed)
-			{
-				args = args.Except(new[] { "-seed" }).ToArray();
-			}
-
-			IWebHost host = CreateWebHost(args);
-
-			if (seed)
-			{
-				await host.InitializeIdentityServerStorages();
-			}
-
-			await host.RunAsync();
+			await CreateWebHost(args).RunAsync();
 		}
-
 
 		private static IWebHost CreateWebHost(string[] args)
 		{

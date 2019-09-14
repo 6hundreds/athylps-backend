@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
-using Athylps.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -24,35 +24,39 @@ namespace Athylps.IdentityServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			ConfigureAspCoreIdentity(services);
+			ConfigureIdentityServer4Storages(services);
+			
 			services.AddDbContext<AthylpsDbContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("AthylpsDb")));
 
+			services.AddMvc()
+				.SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+		}
+
+		private void ConfigureAspCoreIdentity(IServiceCollection services)
+		{
 			services.AddIdentity<User, Role>(options =>
 				{
 					options.User.RequireUniqueEmail = true;
-
 					options.Password.RequireNonAlphanumeric = false;
 					options.Password.RequiredLength = 8;
 				})
 				.AddEntityFrameworkStores<AthylpsDbContext>()
 				.AddDefaultTokenProviders();
+		}
 
-			services.AddMvc()
-				.SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
-
+		private void ConfigureIdentityServer4Storages(IServiceCollection services)
+		{
 			string migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-			var builder = services.AddIdentityServer(options =>
+			IIdentityServerBuilder builder = services.AddIdentityServer(options =>
 				{
 					options.Events.RaiseErrorEvents = true;
 					options.Events.RaiseInformationEvents = true;
 					options.Events.RaiseFailureEvents = true;
 					options.Events.RaiseSuccessEvents = true;
 				})
-				.AddInMemoryIdentityResources(Config.GetIdentityResources())
-				.AddInMemoryApiResources(Config.GetApis())
-				.AddInMemoryClients(Config.GetClients(Configuration))
-				.AddAspNetIdentity<User>()
 				.AddConfigurationStore(options =>
 				{
 					options.ConfigureDbContext = db =>
@@ -61,12 +65,13 @@ namespace Athylps.IdentityServer
 				})
 				.AddOperationalStore(options =>
 				{
-					options.ConfigureDbContext = db => 
-						db.UseSqlServer(Configuration.GetConnectionString("OperationDb"),
+					options.ConfigureDbContext = db =>
+						db.UseSqlServer(Configuration.GetConnectionString("PersistedGrantDb"),
 							sql => sql.MigrationsAssembly(migrationsAssembly));
 
 					options.EnableTokenCleanup = true;
-				});
+				})
+				.AddAspNetIdentity<User>();
 
 			if (Environment.IsDevelopment())
 			{
@@ -80,14 +85,19 @@ namespace Athylps.IdentityServer
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			if (env.IsDevelopment())
+			if (Environment.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseDatabaseErrorPage();
 			}
+			else
+			{
+				app.UseExceptionHandler("/Home/Error");
+			}
 
 			app.UseStaticFiles();
 			app.UseIdentityServer();
+			app.UseMvcWithDefaultRoute();
 		}
 	}
 }

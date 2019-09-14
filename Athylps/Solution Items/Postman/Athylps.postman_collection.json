@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "60309b6c-090c-4ff8-b733-d2ec2751254b",
+		"name": "Athylps",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Api",
+			"item": []
+		},
+		{
+			"name": "IdentityServer",
+			"item": [
+				{
+					"name": "Endpoints",
+					"item": [
+						{
+							"name": "Discovery",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{identityHost}}/.well-known/openid-configuration",
+									"host": [
+										"{{identityHost}}"
+									],
+									"path": [
+										".well-known",
+										"openid-configuration"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UserInfo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revocation",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Authorization",
+					"item": [
+						{
+							"name": "LoginAndPassword",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "client_id",
+											"value": "api1",
+											"type": "text"
+										},
+										{
+											"key": "client_secret",
+											"value": "511536EF-F270-4058-80CA-1C89C192F69A",
+											"type": "text"
+										},
+										{
+											"key": "grant_type",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "eG1Adf33",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/connect/token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"connect",
+										"token"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}
