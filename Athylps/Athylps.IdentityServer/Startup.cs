@@ -2,6 +2,7 @@
 using System.Reflection;
 using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
+using Athylps.IdentityServer.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -25,7 +26,7 @@ namespace Athylps.IdentityServer
 		public void ConfigureServices(IServiceCollection services)
 		{
 			ConfigureAspCoreIdentity(services);
-			ConfigureIdentityServer4Storages(services);
+			ConfigureIdentityServer(services);
 			
 			services.AddDbContext<AthylpsDbContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("AthylpsDb")));
@@ -46,7 +47,7 @@ namespace Athylps.IdentityServer
 				.AddDefaultTokenProviders();
 		}
 
-		private void ConfigureIdentityServer4Storages(IServiceCollection services)
+		private void ConfigureIdentityServer(IServiceCollection services)
 		{
 			string migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
@@ -71,7 +72,8 @@ namespace Athylps.IdentityServer
 
 					options.EnableTokenCleanup = true;
 				})
-				.AddAspNetIdentity<User>();
+				.AddAspNetIdentity<User>()
+				.AddResourceOwnerValidator<EmailAndUsernameResourceOwnerPasswordValidator>();
 
 			if (Environment.IsDevelopment())
 			{
@@ -94,7 +96,7 @@ namespace Athylps.IdentityServer
 			{
 				app.UseExceptionHandler("/Home/Error");
 			}
-
+			
 			app.UseStaticFiles();
 			app.UseIdentityServer();
 			app.UseMvcWithDefaultRoute();
