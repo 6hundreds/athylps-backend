@@ -29,7 +29,7 @@ namespace Athylps.IdentityServer
 			ConfigureIdentityServer(services);
 			
 			services.AddDbContext<AthylpsDbContext>(options =>
-				options.UseSqlServer(Configuration.GetConnectionString("AthylpsDb")));
+				options.UseSqlServer(Configuration.GetConnectionString(Constants.AthylpsDbName)));
 
 			services.AddMvc()
 				.SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
@@ -61,13 +61,13 @@ namespace Athylps.IdentityServer
 				.AddConfigurationStore(options =>
 				{
 					options.ConfigureDbContext = db =>
-						db.UseSqlServer(Configuration.GetConnectionString("ConfigurationDb"),
+						db.UseSqlServer(Configuration.GetConnectionString(Constants.ConfigurationDbName),
 							sql => sql.MigrationsAssembly(migrationsAssembly));
 				})
 				.AddOperationalStore(options =>
 				{
 					options.ConfigureDbContext = db =>
-						db.UseSqlServer(Configuration.GetConnectionString("PersistedGrantDb"),
+						db.UseSqlServer(Configuration.GetConnectionString(Constants.PersistedGrantDbName),
 							sql => sql.MigrationsAssembly(migrationsAssembly));
 
 					options.EnableTokenCleanup = true;
