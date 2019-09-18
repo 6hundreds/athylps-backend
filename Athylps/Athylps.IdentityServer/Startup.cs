@@ -40,8 +40,14 @@ namespace Athylps.IdentityServer
 			services.AddIdentity<User, Role>(options =>
 				{
 					options.User.RequireUniqueEmail = true;
+					options.User.AllowedUserNameCharacters = Constants.AllowedUserNameCharacters;
+
 					options.Password.RequireNonAlphanumeric = false;
 					options.Password.RequiredLength = 8;
+
+					options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+					options.Lockout.MaxFailedAccessAttempts = 5;
+					options.Lockout.AllowedForNewUsers = true;
 				})
 				.AddEntityFrameworkStores<AthylpsDbContext>()
 				.AddDefaultTokenProviders();
