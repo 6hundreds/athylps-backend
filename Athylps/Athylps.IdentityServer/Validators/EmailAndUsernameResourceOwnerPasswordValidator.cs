@@ -34,14 +34,38 @@ namespace Athylps.IdentityServer.Validators
 				.FirstOrDefaultAsync(u => u.NormalizedUserName == userName || 
 				                          u.NormalizedEmail == userName);
 
-			if (user != null)
+			bool userIsValid = ValidateUser(user, out string logMessage, out string eventError);
+
+			if (userIsValid)
 			{
 				await ProcessSignInAsync(user, context);
 			}
 			else
 			{
-				await ProcessSignInErrorAsync(null, context);
+				await ProcessSignInErrorAsync(logMessage, eventError, context);	
 			}
+		}
+
+		private bool ValidateUser(User user, out string logMessage, out string eventError)
+		{
+			logMessage = null;
+			eventError = null;
+			bool result = true;
+
+			if (user == null)
+			{
+				logMessage = "No user found matching username or email: {username}";
+				eventError = "Invalid username";
+				result = false;
+			}
+			else if (!user.EmailConfirmed)
+			{
+				logMessage = "Authentication failed for username: {username}, reason: email not confirmed";
+				eventError = "Email not confirmed";
+				result = false;
+			}
+
+			return result;
 		}
 
 		private async Task ProcessSignInAsync(User user, ResourceOwnerPasswordValidationContext context)
@@ -77,13 +101,8 @@ namespace Athylps.IdentityServer.Validators
 		{
 			string logMessage;
 			string eventError;
-
-			if (signInResult == null)
-			{
-				logMessage = "No user found matching username or email: {username}";
-				eventError = "Invalid username";
-			}
-			else if (signInResult.IsLockedOut)
+			
+			if (signInResult.IsLockedOut)
 			{
 				logMessage = "Authentication failed for username: {username}, reason: locked out";
 				eventError = "Locked out";
@@ -95,10 +114,17 @@ namespace Athylps.IdentityServer.Validators
 			}
 			else
 			{
-				eventError = "Invalid credentials";
 				logMessage = "Authentication failed for username: {username}, reason: invalid credentials";
+				eventError = "Invalid credentials";
 			}
 
+			await ProcessSignInErrorAsync(logMessage, eventError, context);
+		}
+
+		private async Task ProcessSignInErrorAsync(string logMessage, 
+			string eventError, 
+			ResourceOwnerPasswordValidationContext context)
+		{
 			UserLoginFailureEvent identityEvent = new UserLoginFailureEvent(context.UserName,
 				eventError,
 				false
