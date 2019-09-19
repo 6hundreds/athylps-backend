@@ -1,4 +1,5 @@
 ﻿using Athylps.Core.Data.Context;
+using Athylps.Core.ErrorHandling.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,25 +12,23 @@ namespace Athylps.UserApi
 {
 	public class Startup
 	{
-		public IConfiguration Configuration { get; }
-		public IHostingEnvironment Environment { get; }
+		private readonly IConfiguration _configuration;
 
-		public Startup(IConfiguration configuration, IHostingEnvironment environment)
+		public Startup(IConfiguration configuration)
 		{
-			Configuration = configuration;
-			Environment = environment;
+			_configuration = configuration;
 		}
 
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<AthylpsDbContext>(options =>
-				options.UseSqlServer(Configuration.GetConnectionString("AthylpsDb")));
+				options.UseSqlServer(_configuration.GetConnectionString("AthylpsDb")));
 
 			services.AddAuthentication("Bearer")
 				.AddJwtBearer("Bearer", options =>
 				{
-					options.Audience = Configuration["IdentityServer:Audience"];
-					options.Authority = Configuration["IdentityServer:Authority"];
+					options.Audience = _configuration["IdentityServer:Audience"];
+					options.Authority = _configuration["IdentityServer:Authority"];
 					options.RequireHttpsMetadata = false;
 				});
 
@@ -42,6 +41,7 @@ namespace Athylps.UserApi
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			app.UseAuthentication();
+			app.UseExceptionHandlingMiddleware();
 			app.UseMvc();
 		}
 	}
