@@ -32,34 +32,27 @@ namespace Athylps.Core.ErrorHandling.Middleware
 
 		private async Task HandleExceptionAsync(Exception exception, HttpContext context)
 		{
-			HttpStatusCode code;
 			ErrorContainer errorContainer = new ErrorContainer();
 
 			switch (exception)
 			{
-				case MultipleAthylpsException mal:
-					errorContainer.Errors.AddRange(mal.ToContracts());
-					code = HttpStatusCode.BadRequest;
-					break;
-
 				case AthylpsException ae:
+					errorContainer.Status = (int)HttpStatusCode.BadRequest;
 					errorContainer.Errors.Add(ae.ToContract());
-					code = HttpStatusCode.BadRequest;
 					break;
 
 				default:
+					errorContainer.Status = (int)HttpStatusCode.InternalServerError;
 					errorContainer.Errors.Add(new ErrorContract
 					{
 						Message = exception.Message,
 						Code = ErrorCode.UnspecifiedError
 					});
-
-					code = HttpStatusCode.InternalServerError;
 					break;
 			}
 
+			context.Response.StatusCode = errorContainer.Status;
 			context.Response.ContentType = "application/json";
-			context.Response.StatusCode = (int)code;
 			string result = JsonConvert.SerializeObject(errorContainer);
 
 			await context.Response.WriteAsync(result);
