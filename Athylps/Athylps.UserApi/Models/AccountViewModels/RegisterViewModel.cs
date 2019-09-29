@@ -2,7 +2,7 @@
 
 namespace Athylps.UserApi.Models.AccountViewModels
 {
-	public class RegisterViewModel
+	public class RegisterModel
 	{
 		[Required]
 		[EmailAddress]

@@ -37,18 +37,7 @@ namespace Athylps.IdentityServer
 
 		private void ConfigureAspCoreIdentity(IServiceCollection services)
 		{
-			services.AddIdentity<User, Role>(options =>
-				{
-					options.User.RequireUniqueEmail = true;
-					options.User.AllowedUserNameCharacters = Constants.AllowedUserNameCharacters;
-
-					options.Password.RequireNonAlphanumeric = false;
-					options.Password.RequiredLength = 8;
-
-					options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-					options.Lockout.MaxFailedAccessAttempts = 5;
-					options.Lockout.AllowedForNewUsers = true;
-				})
+			services.AddIdentity<User, Role>()
 				.AddEntityFrameworkStores<AthylpsDbContext>()
 				.AddDefaultTokenProviders();
 		}

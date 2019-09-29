@@ -1,4 +1,5 @@
-﻿using Athylps.Core.Data.Context;
+﻿using System;
+using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
 using Athylps.Core.ErrorHandling.Middleware;
 using Athylps.UserApi.Attributes;
@@ -34,9 +35,20 @@ namespace Athylps.UserApi
 					options.RequireHttpsMetadata = false;
 				});
 
-			services.AddIdentity<User, Role>()
-				.AddEntityFrameworkStores<AthylpsDbContext>();
+			services.AddIdentity<User, Role>(options =>
+			{
+				options.User.RequireUniqueEmail = true;
+				options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequiredLength = 8;
+
+				options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+				options.Lockout.MaxFailedAccessAttempts = 5;
+				options.Lockout.AllowedForNewUsers = true;
+			})
+				.AddEntityFrameworkStores<AthylpsDbContext>();
+			
 			services.AddMvc(options =>
 				{
 					options.Filters.Add<ValidateModelAttribute>();

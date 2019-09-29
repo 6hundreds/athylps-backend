@@ -3,6 +3,7 @@
 	public enum ErrorCode
 	{
 		UnspecifiedError = 1,
-		ModelValidationError
+		ModelValidationError,
+		IdentityResultError
 	}
 }

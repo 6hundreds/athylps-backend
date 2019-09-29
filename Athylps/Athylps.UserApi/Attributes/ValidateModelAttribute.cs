@@ -19,7 +19,7 @@ namespace Athylps.UserApi.Attributes
                 .Select(e => new AthylpsException(ErrorCode.ModelValidationError, e.ErrorMessage))
                 .ToList();
 
-            throw new AthylpsMultipleException(ErrorCode.ModelValidationError, exceptions);
+            throw new AthylpsMultipleException(exceptions);
         }
     }
 }

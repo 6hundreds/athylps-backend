@@ -1,18 +1,13 @@
-﻿using System.Collections.Generic;
-using Athylps.Core.ErrorHandling.Contracts;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Athylps.Core.ErrorHandling.Exceptions
 {
-	public class AthylpsMultipleException : AthylpsException
+	public class AthylpsMultipleException : Exception
 	{
 		public IReadOnlyList<AthylpsException> Exceptions { get; }
 
-		public AthylpsMultipleException(ErrorCode errorCode, IEnumerable<AthylpsException> exceptions) : base(errorCode)
-		{
-			Exceptions = new List<AthylpsException>(exceptions);
-		}
-
-		public AthylpsMultipleException(ErrorCode errorCode, string message, IEnumerable<AthylpsException> exceptions) : base(errorCode, message)
+		public AthylpsMultipleException(IEnumerable<AthylpsException> exceptions)
 		{
 			Exceptions = new List<AthylpsException>(exceptions);
 		}
