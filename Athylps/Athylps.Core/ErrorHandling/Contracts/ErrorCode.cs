@@ -2,6 +2,7 @@
 {
 	public enum ErrorCode
 	{
-		UnspecifiedError
+		UnspecifiedError = 1,
+		ModelValidationError
 	}
 }

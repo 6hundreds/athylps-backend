@@ -1,5 +1,7 @@
 ﻿using Athylps.Core.Data.Context;
+using Athylps.Core.Entities;
 using Athylps.Core.ErrorHandling.Middleware;
+using Athylps.UserApi.Attributes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,10 +34,21 @@ namespace Athylps.UserApi
 					options.RequireHttpsMetadata = false;
 				});
 
-			services.AddMvc()
-				.AddJsonOptions(options => 
+			services.AddIdentity<User, Role>()
+				.AddEntityFrameworkStores<AthylpsDbContext>();
+
+			services.AddMvc(options =>
+				{
+					options.Filters.Add<ValidateModelAttribute>();
+				})
+				.AddJsonOptions(options =>
 					options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+			services.Configure<ApiBehaviorOptions>(options =>
+			{
+				options.SuppressModelStateInvalidFilter = true;
+			});
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)

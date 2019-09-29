@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Athylps.Core.ErrorHandling.Contracts;
@@ -36,11 +38,20 @@ namespace Athylps.Core.ErrorHandling.Middleware
 
 			switch (exception)
 			{
+				case AthylpsMultipleException me:
+					errorContainer.Status = (int)HttpStatusCode.BadRequest;
+					List<ErrorContract> errors = me.Exceptions
+						.Select(e => e.ToContract())
+						.ToList();
+					
+					errorContainer.Errors.AddRange(errors);
+					break;
+				
 				case AthylpsException ae:
 					errorContainer.Status = (int)HttpStatusCode.BadRequest;
 					errorContainer.Errors.Add(ae.ToContract());
 					break;
-
+				
 				default:
 					errorContainer.Status = (int)HttpStatusCode.InternalServerError;
 					errorContainer.Errors.Add(new ErrorContract
