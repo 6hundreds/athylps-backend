@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Athylps.Core\Athylps.Core.csproj" />
+        <ProjectReference Include="..\Athylps.Infrastructure\Athylps.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

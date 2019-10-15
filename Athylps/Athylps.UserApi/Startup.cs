@@ -1,7 +1,7 @@
 ﻿using System;
-using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
 using Athylps.Core.ErrorHandling.Middleware;
+using Athylps.Infrastructure.Data.Context;
 using Athylps.UserApi.Attributes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

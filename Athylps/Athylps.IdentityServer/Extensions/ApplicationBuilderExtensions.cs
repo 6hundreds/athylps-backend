@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
 using Athylps.Core.Types;
+using Athylps.Infrastructure.Data.Context;
 using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using Athylps.Core.Data.Context;
 using Athylps.Core.Entities;
 using Athylps.IdentityServer.Validators;
+using Athylps.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
