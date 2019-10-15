@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Athylps.Core.Entities;
 using Athylps.Core.Types;
+using Athylps.IdentityServer.Models.Options;
 using Athylps.Infrastructure.Data.Context;
 using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -14,13 +16,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace Athylps.IdentityServer.Extensions
 {
-	public static class ApplicationBuilderExtensions
+	internal static class ApplicationBuilderExtensions
 	{
-		public static async Task InitializeIdentityServerStorages(this IWebHost webHost)
+		internal static async Task InitializeIdentityServerStorages(this IWebHost webHost)
 		{
 			using (IServiceScope serviceScope = webHost.Services.CreateScope())
 			{
@@ -43,9 +46,11 @@ namespace Athylps.IdentityServer.Extensions
 
 			if (!await configurationDbContext.Clients.AnyAsync())
 			{
-				IConfiguration configuration = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
-					
-				foreach (Client client in Configuration.GetClients(configuration))
+				IdentityServerOptions identityOptions = serviceScope.ServiceProvider
+					.GetService<IOptionsMonitor<IdentityServerOptions>>()
+					.CurrentValue;
+				
+				foreach (Client client in Configuration.GetClients(identityOptions.Clients))
 				{
 					await configurationDbContext.Clients.AddAsync(client.ToEntity());
 				}
@@ -88,21 +93,32 @@ namespace Athylps.IdentityServer.Extensions
 				}
 			}
 
+			var optionsData = serviceScope.ServiceProvider
+					.GetService<IOptionsMonitor<IdentityServerOptions>>()
+					.CurrentValue
+					.Users
+					.ToDictionary(c => c.Name, c => c);
+
 			var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
 
 			User admin = await userManager.FindByNameAsync("admin");
 			
 			if (admin == null)
 			{
+				if (!optionsData.TryGetValue("admin", out var userOptions))
+				{
+					Log.Error("Не найдены данные для пользователя {name}", nameof(admin));
+					throw new ArgumentNullException(nameof(admin));
+				}
+
 				admin = new User
 				{
-					UserName = "admin",
-					EmailConfirmed = true,
-					Email = "a@email.com"
+					UserName = userOptions.Name,
+					Email = userOptions.Email,
+					EmailConfirmed = true
 				};
-
-				IConfiguration configuration = serviceScope.ServiceProvider.GetService<IConfiguration>();
-				IdentityResult result = await userManager.CreateAsync(admin, configuration["Admin:Password"]);
+				
+				IdentityResult result = await userManager.CreateAsync(admin, userOptions.Password);
 
 				if (!result.Succeeded)
 				{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Athylps.Core.Entities;
+using Athylps.IdentityServer.Models.Options;
 using Athylps.IdentityServer.Validators;
 using Athylps.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Builder;
@@ -25,9 +26,11 @@ namespace Athylps.IdentityServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.Configure<IdentityServerOptions>(Configuration.GetSection("IdentityServer"));
+
 			ConfigureAspCoreIdentity(services);
 			ConfigureIdentityServer(services);
-			
+
 			services.AddDbContext<AthylpsDbContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString(Constants.AthylpsDbName)));
 
@@ -37,7 +40,11 @@ namespace Athylps.IdentityServer
 
 		private void ConfigureAspCoreIdentity(IServiceCollection services)
 		{
-			services.AddIdentity<User, Role>()
+			services
+				.AddIdentity<User, Role>(options =>
+				{
+					options.Password.RequireNonAlphanumeric = false;
+				})
 				.AddEntityFrameworkStores<AthylpsDbContext>()
 				.AddDefaultTokenProviders();
 		}
@@ -91,7 +98,7 @@ namespace Athylps.IdentityServer
 			{
 				app.UseExceptionHandler("/Home/Error");
 			}
-			
+
 			app.UseStaticFiles();
 			app.UseIdentityServer();
 			app.UseMvcWithDefaultRoute();
