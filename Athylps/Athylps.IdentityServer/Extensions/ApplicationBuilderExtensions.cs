@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Athylps.Core.Entities;
+﻿using Athylps.Core.Entities;
 using Athylps.Core.Types;
 using Athylps.IdentityServer.Models.Options;
 using Athylps.Infrastructure.Data.Context;
@@ -14,10 +9,13 @@ using IdentityServer4.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Athylps.IdentityServer.Extensions
 {
